@@ -10,15 +10,14 @@ from django.http import HttpRequest, JsonResponse, QueryDict
 from app.models import *
 from rest_framework.response import Response
 from rest_framework.request import Request
-
 from rest_framework.decorators import api_view
-
+import os
 from internal.models import Image
 from petri_ca.settings import PASSWORD
 from utils import ResponseWithCode, method_not_allowed, r200, r500 , send_delete_transaction_mail, send_error_mail, send_event_unverification_mail, send_event_verification_mail
 
 # TODO: update this every year
-YEAR = 2026
+YEAR = os.environ.get("YEAR", "2026")
 
 @api_view(['POST'])
 def getAllUsers(request):
