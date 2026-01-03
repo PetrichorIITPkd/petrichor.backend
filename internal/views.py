@@ -10,13 +10,14 @@ from django.http import HttpRequest, JsonResponse, QueryDict
 from app.models import *
 from rest_framework.response import Response
 from rest_framework.request import Request
-
 from rest_framework.decorators import api_view
-
+import os
 from internal.models import Image
 from petri_ca.settings import PASSWORD
 from utils import ResponseWithCode, method_not_allowed, r200, r500 , send_delete_transaction_mail, send_error_mail, send_event_unverification_mail, send_event_verification_mail
 
+# TODO: update this every year
+YEAR = os.environ.get("YEAR", "2026")
 
 @api_view(['POST'])
 def getAllUsers(request):
@@ -294,6 +295,7 @@ def addEvent(request:Request):
         if (minMember > maxMember):
             return r500("minMember cannot exceed maxMember")
 
+        # TODO: is this even needed?
         dt_fee = int(fee)
         if dt_fee == 0:
             eventId = f'{eventId[0]}F{eventId[2:]}'
@@ -442,7 +444,8 @@ def get_next_id(request):
         events = Event.objects.filter(event_id__startswith=event_type[0]).values('event_id')
 
         if events.exists():
-            event_ids = [int(event['event_id'][2:]) for event in events]
+            # TODO: update this every year
+            event_ids = [int(event['event_id'][2:].replace(f'_{YEAR}', '')) for event in events]
             number = sorted(event_ids)[-1]
         number +=1
         
@@ -622,6 +625,7 @@ def updateEvent(request: Request):
             if (password != PASSWORD):
                 return r500("Incorrect password. Event was not updated")
             
+            # TODO : LOOK INTO THIS
             if (dt_eventId in ["TF01", "WF01"]):
                 return r500(f'Cannot Edit Tutorial')
             
