@@ -32,6 +32,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG')) == "True"
+YEAR = (os.environ.get('YEAR', '2026'))
 PASSWORD = (os.environ.get('PASSWORD'))
 COUPON_CODES = (os.environ.get('COUPON_CODES', "")).split(',')
 FRONTEND_LINK = "https://petrichor.events/"
