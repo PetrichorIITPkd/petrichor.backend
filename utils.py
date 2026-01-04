@@ -154,10 +154,16 @@ def send_event_registration_mail(emails,event,verified):
 
 def send_event_verification_mail(emails, trIds,event):
     subject = 'Petrichor Event: ' + event
-    message = (f'''Your Payment for the event <strong>{event}</strong> Registration with transaction Id:<strong> {trIds} </strong> has been confirmed. In case you need accomodation, the details are mentioned below in the google form. If you have any queries please contact either Nikhil(8590118650) or Ajul(8921154307).
-               <br/><br/><a href="https://forms.gle/JBAWLd7U2J9RPoFe7">Accomodation</a><br/><br/>
-               Accomodation Form: https://forms.gle/JBAWLd7U2J9RPoFe7
-               <br/><br/><br/> You can also contact us here 
+    # message = (f'''Your Payment for the event <strong>{event}</strong> Registration with transaction Id:<strong> {trIds} </strong> has been confirmed. In case you need accomodation, the details are mentioned below in the google form. If you have any queries please contact either Nikhil(8590118650) or Ajul(8921154307).
+    #            <br/><br/><a href="https://forms.gle/JBAWLd7U2J9RPoFe7">Accomodation</a><br/><br/>
+    #            Accomodation Form: https://forms.gle/JBAWLd7U2J9RPoFe7
+    #            <br/><br/><br/> You can also contact us here 
+    #   <a href="{settings.FRONTEND_LINK}/contactUs">Contact Us</a><br/><br/>
+    # ''')
+
+    # TODO may need to add accomodation link
+    message = (f'''Your Payment for the event <strong>{event}</strong> Registration with transaction Id:<strong> {trIds} </strong> has been confirmed. If you have any queries please contact either Abhijith(8075821728) or Rizwan(9207267393).
+               <br/> You can also contact us here 
       <a href="{settings.FRONTEND_LINK}/contactUs">Contact Us</a><br/><br/>
     ''')
     message +="<br> Thank you for participating in Petrichor'25."
