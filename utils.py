@@ -21,6 +21,8 @@ AUTH_EXEMPT = ['/admin/','/internal/','/api/register/','/api/login/','/api/forge
 CLOSED_REGISTRATIONS = ['TP06', 'TP07', "TP04", "CP16", "CP06", "CP09", "CP05", "CP14", "TP10", "TP08"]
 # this is not used now.
 
+YEAR = (settings.YEAR).replace("20","")
+
 # Helper functions
 def error_response(message):
     return Response({"error": message}, status=500)
@@ -141,7 +143,7 @@ def send_event_registration_mail(emails,event,verified):
     ''')
     if not verified:
         message += '<strong>Please note your registration has not been verified by our team till now. We will will verify your payment and mail you a confirmation mail soon.</strong>'
-    message +="<br> Thank you for participating in Petrichor'25"
+    message +=f"<br> Thank you for participating in Petrichor'{YEAR}"
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = emails
@@ -162,11 +164,13 @@ def send_event_verification_mail(emails, trIds,event):
     # ''')
 
     # TODO may need to add accomodation link
-    message = (f'''Your Payment for the event <strong>{event}</strong> Registration with transaction Id:<strong> {trIds} </strong> has been confirmed. If you have any queries please contact either Abhijith(8075821728) or Rizwan(9207267393).
-               <br/> You can also contact us here 
+    message = (f'''Your Payment for the event <strong>{event}</strong> Registration with transaction Id:<strong> {trIds} </strong> has been confirmed. In case you need accomodation, the details are mentioned below in the google form. If you have any queries please contact either Abhijith(8075821728) or Rizwan(9207267393).
+               <br/><br/><a href="https://forms.gle/7WDJMbCwVXSMAWcV9">Accomodation</a><br/><br/>
+                Accomodation Form: https://forms.gle/7WDJMbCwVXSMAWcV9
+                <br/><br/><br/> You can also contact us here 
       <a href="{settings.FRONTEND_LINK}/contactUs">Contact Us</a><br/><br/>
     ''')
-    message +="<br> Thank you for participating in Petrichor'25."
+    message +=f"<br> Thank you for participating in Petrichor'{YEAR}."
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = emails
@@ -182,7 +186,7 @@ def send_event_unverification_mail(emails, trIds,event):
     message = (f'''We have <strong>unverified and deleted</strong> your registration for the event :{event} with given transactionId: {trIds}. Now, you can re-register for the event. You can also contact us here 
       <a href="{settings.FRONTEND_LINK}/contactUs">Contact Us</a>
     ''')
-    message +="<br> Thank you for participating in Petrichor'25."
+    message +=f"<br> Thank you for participating in Petrichor'{YEAR}"
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = emails
@@ -194,10 +198,10 @@ def send_event_unverification_mail(emails, trIds,event):
     return True
 
 def send_user_verification_mail(email:str,token):
-    subject = 'Petrichor \'25 Registration' 
+    subject = f'Petrichor \'{YEAR} Registration' 
     verification_link = f"{settings.BACKEND_LINK}api/login/verify/{token}/"
     message = (f'''<div>
-                <p>We have received a registration request for this email at <a href="{settings.FRONTEND_LINK}">Petrichor25</a>\
+                <p>We have received a registration request for this email at <a href="{settings.FRONTEND_LINK}">Petrichor \'{YEAR}</a>\
                   Please click here to verify your registration <br>
                </p>
                <center><a class="button-green button" style="color:white;" href="{verification_link}">Verify</a></center>
@@ -209,7 +213,7 @@ def send_user_verification_mail(email:str,token):
                </p>
                </div>
     ''')
-    message +="<p><br> Thank you for participating in Petrichor'25.</p>"
+    message +=f"<p><br> Thank you for participating in Petrichor'{YEAR}.</p>"
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [email]
@@ -669,7 +673,7 @@ def ForgetPasswordHtml(name,action_url):
             <tr>
               <td class="email-masthead">
                 <a href="{settings.FRONTEND_LINK}" class="f-fallback email-masthead_name">
-                Petrichor 25
+                Petrichor {YEAR}
               </a>
               </td>
             </tr>
@@ -682,7 +686,7 @@ def ForgetPasswordHtml(name,action_url):
                     <td class="content-cell">
                       <div class="f-fallback">
                         <h1>Hi {name},</h1>
-                        <p>You recently requested to reset your password for your Petrichor 25 account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
+                        <p>You recently requested to reset your password for your Petrichor {YEAR} account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
                         <!-- Action -->
                         <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">
                           <tr>
@@ -701,7 +705,7 @@ def ForgetPasswordHtml(name,action_url):
                         </table>
                         
                         <p>Thanks,
-                          <br>The Petrichor 25 team</p>
+                          <br>The Petrichor {YEAR} team</p>
                         <!-- Sub copy -->
                         <table class="body-sub" role="presentation">
                           <tr>
@@ -1166,7 +1170,7 @@ def messageUser(name,message:str):
             <tr>
               <td class="email-masthead">
                 <a href="{settings.FRONTEND_LINK}" class="f-fallback email-masthead_name">
-                Petrichor 25
+                Petrichor {YEAR}
               </a>
               </td>
             </tr>
@@ -1181,7 +1185,7 @@ def messageUser(name,message:str):
                         <h1>Hi {name},</h1>
                         {message}                        
                         <p>Thanks,
-                          <br>Team Petrichor'25</p>
+                          <br>Team Petrichor'{YEAR}</p>
                       </div>
                     </td>
                   </tr>
