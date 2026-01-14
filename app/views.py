@@ -93,6 +93,145 @@ def validateSignUpData(data: QueryDict | dict):
     return valid, message
 
 
+# @api_view(['POST'])
+# def signup(request:Request):
+#     '''
+#         Registers a User to the database
+#     '''
+#     if request.method != 'POST':
+#         return method_not_allowed()
+
+#     try:
+#         # Retreiving all data
+#         data = request.data
+#         if (not data) or not isinstance(data,(dict,QueryDict)):
+#             return r500("Data not provided")
+
+#         username = data.get('username',None) 
+#         email = data.get('email',None) 
+#         password = data.get('password',None) 
+#         phone = data.get('phone',None) 
+#         college = data.get('college',None) 
+#         gradyear = data.get('gradyear',None) 
+#         institype = data.get('institype',None) 
+#         stream = data.get('stream',None) 
+#         if username is None:
+#             return r500("username required")
+#         elif email is None:
+#             return r500("email required")
+#         elif password is None:
+#             return r500("password required")
+#         elif phone is None:
+#             return r500("phone required")
+#         elif gradyear is None:
+#             return r500("gradyear required")
+#         elif institype is None:
+#             return r500("institype required")
+#         username = username.strip()
+        
+#         try:
+#             valid,message = validateSignUpData(data)  
+#             if not valid:
+#                 return r500(message)
+#         except MultiValueDictKeyError or ValueError or KeyError:
+#             return r500("Data received does not contains all the required fields")
+
+        
+#         # Checking if User already exists
+#         try:
+#             User.objects.get(username=email)
+#             return ResponseWithCode({
+#                 "success":False,
+#                 "username":username
+#             },
+#             "Email already registered",400)
+#         except User.DoesNotExist:
+#             try:
+#                 new_user = User(username=email,email = email)
+#                 new_user.set_password(password)
+#                 new_user.is_active = True
+#             except IntegrityError as e: # Email alreeady exists
+#                 # send_error_mail(inspect.stack()[0][3], request.data, e)  # Leave this commented otherwise every wrong login will send an error mail
+#                 return r500('Email already exists')
+            
+#             user_registration = None
+#             user_profile = None
+#             try:
+#                 # creates or gets the InstituteId
+#                 if institype != "neither":
+#                     institute = Institute.objects.get_or_create(instiName=college, institutionType=institype)[0]
+#                     # institute = Institute.objects.get(instiName=instituteID)
+#                 else:
+#                     institute = Institute.objects.get_or_create(instiName='NoInsti', institutionType=institype)[0]
+#                 institute.save() # Kept for safety {create will automatically save}
+                
+#                 new_user.save()
+#                 user_profile = Profile(username=username, 
+#                                     user=new_user,
+#                                     phone=phone,
+#                                     instituteID=institute,
+#                                     gradYear=gradyear,
+#                                     stream=stream,
+#                                     verified = False)
+                
+#                 # saving the profile and user. If any of above steps fails the Profile will not be created
+#                 user_profile.save()
+
+#                 user_registration = UserRegistrations.objects.filter(email = email).first()
+#                 if user_registration is not None:
+#                     user_registration.user = new_user
+#                     user_registration.save()
+#                 else:
+#                     UserRegistrations.objects.create(
+#                         user = new_user,
+#                         email = email,
+#                         transactionIds =""
+#                     )
+
+
+#                 token = get_forget_token(email)# Generates Token, It lasts for 5 mins
+#                 if not send_user_verification_mail(email,token):
+#                     if new_user:
+#                         new_user.delete()
+#                     if user_registration:
+#                         user_registration.delete()
+#                     if user_profile:
+#                         user_profile.delete()
+#                     send_error_mail(inspect.stack()[0][3], request.data, f"Unable to send verification email. {data}")  
+#                     return r500(f"Unable to send verification email to {email}. Please check the email or re-try after sometime.")
+
+
+#                 # print("User Created")
+#                 return ResponseWithCode({
+#                     "success":True,
+#                     "username":username
+#                 },"We have sent an verification request to your email. Please verify the registration.")
+            
+#             except IntegrityError as e:
+#                 if new_user:
+#                     new_user.delete()
+#                 if user_registration:
+#                     user_registration.delete()
+#                 if user_profile:
+#                     user_profile.delete()
+#                 # send_error_mail(inspect.stack()[0][3], request.data, e)  # Leave this commented otherwise every wrong login will send an error mail
+#                 return r500("User already exists. Try something different.")
+#             except Exception as e:
+#                 if new_user:
+#                     new_user.delete()
+#                 if user_registration:
+#                     user_registration.delete()
+#                 if user_profile:
+#                     user_profile.delete()
+#                 send_error_mail(inspect.stack()[0][3], request.data, e)  
+#                 r500("Something failed")
+
+
+#     except Exception as e:
+#         print(e)
+#         send_error_mail(inspect.stack()[0][3], request.data, e)
+#         return r500("Something Bad Happened")
+
 @api_view(['POST'])
 def signup(request:Request):
     '''
@@ -100,6 +239,11 @@ def signup(request:Request):
     '''
     if request.method != 'POST':
         return method_not_allowed()
+
+    # Initialize variables at the top to avoid NameError during cleanup
+    new_user = None
+    user_registration = None
+    user_profile = None
 
     try:
         # Retreiving all data
@@ -133,7 +277,7 @@ def signup(request:Request):
             valid,message = validateSignUpData(data)  
             if not valid:
                 return r500(message)
-        except MultiValueDictKeyError or ValueError or KeyError:
+        except (MultiValueDictKeyError, ValueError, KeyError):  # ✅ FIXED: Use tuple
             return r500("Data received does not contains all the required fields")
 
         
@@ -150,20 +294,16 @@ def signup(request:Request):
                 new_user = User(username=email,email = email)
                 new_user.set_password(password)
                 new_user.is_active = True
-            except IntegrityError as e: # Email alreeady exists
-                # send_error_mail(inspect.stack()[0][3], request.data, e)  # Leave this commented otherwise every wrong login will send an error mail
+            except IntegrityError as e:
                 return r500('Email already exists')
             
-            user_registration = None
-            user_profile = None
             try:
                 # creates or gets the InstituteId
                 if institype != "neither":
                     institute = Institute.objects.get_or_create(instiName=college, institutionType=institype)[0]
-                    # institute = Institute.objects.get(instiName=instituteID)
                 else:
                     institute = Institute.objects.get_or_create(instiName='NoInsti', institutionType=institype)[0]
-                institute.save() # Kept for safety {create will automatically save}
+                institute.save()
                 
                 new_user.save()
                 user_profile = Profile(username=username, 
@@ -174,7 +314,6 @@ def signup(request:Request):
                                     stream=stream,
                                     verified = False)
                 
-                # saving the profile and user. If any of above steps fails the Profile will not be created
                 user_profile.save()
 
                 user_registration = UserRegistrations.objects.filter(email = email).first()
@@ -182,14 +321,13 @@ def signup(request:Request):
                     user_registration.user = new_user
                     user_registration.save()
                 else:
-                    UserRegistrations.objects.create(
+                    user_registration = UserRegistrations.objects.create(
                         user = new_user,
                         email = email,
                         transactionIds =""
                     )
 
-
-                token = get_forget_token(email)# Generates Token, It lasts for 5 mins
+                token = get_forget_token(email)
                 if not send_user_verification_mail(email,token):
                     if new_user:
                         new_user.delete()
@@ -200,8 +338,6 @@ def signup(request:Request):
                     send_error_mail(inspect.stack()[0][3], request.data, f"Unable to send verification email. {data}")  
                     return r500(f"Unable to send verification email to {email}. Please check the email or re-try after sometime.")
 
-
-                # print("User Created")
                 return ResponseWithCode({
                     "success":True,
                     "username":username
@@ -214,8 +350,8 @@ def signup(request:Request):
                     user_registration.delete()
                 if user_profile:
                     user_profile.delete()
-                # send_error_mail(inspect.stack()[0][3], request.data, e)  # Leave this commented otherwise every wrong login will send an error mail
                 return r500("User already exists. Try something different.")
+            
             except Exception as e:
                 if new_user:
                     new_user.delete()
@@ -224,13 +360,13 @@ def signup(request:Request):
                 if user_profile:
                     user_profile.delete()
                 send_error_mail(inspect.stack()[0][3], request.data, e)  
-                r500("Something failed")
-
+                return r500(f"Something failed: {e}")  # ✅ FIXED: Added return
 
     except Exception as e:
         print(e)
         send_error_mail(inspect.stack()[0][3], request.data, e)
         return r500("Something Bad Happened")
+    
 
 @api_view(['POST'])
 def resend_verification(request:Request):
