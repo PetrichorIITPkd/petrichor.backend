@@ -192,7 +192,9 @@ def signup(request:Request):
                 print("test printing")
 
                 token = get_forget_token(email)# Generates Token, It lasts for 5 mins
-                if not send_user_verification_mail(email,token):
+                check = send_user_verification_mail(email,token)
+                print("check is", check)
+                if not check:
                     print("Hi")
                     if new_user:
                         new_user.delete()

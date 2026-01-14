@@ -219,7 +219,7 @@ def send_user_verification_mail(email:str,token):
     recipient_list = [email]
     try:
       send_mail(subject , "",from_email = email_from , recipient_list=recipient_list, fail_silently=False, html_message=message)
-    except smtplib.SMTPException:
+    except smtplib.SMTPException as e:
         print(e)
         return False
     return True
