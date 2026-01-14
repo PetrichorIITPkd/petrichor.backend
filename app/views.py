@@ -224,7 +224,7 @@ def signup(request:Request):
                 if user_profile:
                     user_profile.delete()
                 send_error_mail(inspect.stack()[0][3], request.data, e)  
-                r500("Something failed")
+                return r500(f"Something failed {e}")
 
 
     except Exception as e:
