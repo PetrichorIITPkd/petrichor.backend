@@ -21,7 +21,7 @@ AUTH_EXEMPT = ['/admin/','/internal/','/api/register/','/api/login/','/api/forge
 CLOSED_REGISTRATIONS = ['TP06', 'TP07', "TP04", "CP16", "CP06", "CP09", "CP05", "CP14", "TP10", "TP08"]
 # this is not used now.
 
-YEAR = (settings.YEAR).replace("20","")
+# YEAR = (settings.YEAR).replace("20","")
 
 # Helper functions
 def error_response(message):
@@ -143,7 +143,7 @@ def send_event_registration_mail(emails,event,verified):
     ''')
     if not verified:
         message += '<strong>Please note your registration has not been verified by our team till now. We will will verify your payment and mail you a confirmation mail soon.</strong>'
-    message +=f"<br> Thank you for participating in Petrichor'{YEAR}"
+    message +=f"<br> Thank you for participating in Petrichor'2026"
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = emails
@@ -170,7 +170,7 @@ def send_event_verification_mail(emails, trIds,event):
                 <br/><br/><br/> You can also contact us here 
       <a href="{settings.FRONTEND_LINK}/contactUs">Contact Us</a><br/><br/>
     ''')
-    message +=f"<br> Thank you for participating in Petrichor'{YEAR}."
+    message +=f"<br> Thank you for participating in Petrichor'2026."
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = emails
@@ -186,7 +186,7 @@ def send_event_unverification_mail(emails, trIds,event):
     message = (f'''We have <strong>unverified and deleted</strong> your registration for the event :{event} with given transactionId: {trIds}. Now, you can re-register for the event. You can also contact us here 
       <a href="{settings.FRONTEND_LINK}/contactUs">Contact Us</a>
     ''')
-    message +=f"<br> Thank you for participating in Petrichor'{YEAR}"
+    message +=f"<br> Thank you for participating in Petrichor'2026"
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = emails
@@ -198,10 +198,10 @@ def send_event_unverification_mail(emails, trIds,event):
     return True
 
 def send_user_verification_mail(email:str,token):
-    subject = f'Petrichor \'{YEAR} Registration' 
+    subject = f'Petrichor \'2026 Registration' 
     verification_link = f"{settings.BACKEND_LINK}api/login/verify/{token}/"
     message = (f'''<div>
-                <p>We have received a registration request for this email at <a href="{settings.FRONTEND_LINK}">Petrichor \'{YEAR}</a>\
+                <p>We have received a registration request for this email at <a href="{settings.FRONTEND_LINK}">Petrichor \'2026</a>\
                   Please click here to verify your registration <br>
                </p>
                <center><a class="button-green button" style="color:white;" href="{verification_link}">Verify</a></center>
@@ -213,7 +213,7 @@ def send_user_verification_mail(email:str,token):
                </p>
                </div>
     ''')
-    message +=f"<p><br> Thank you for participating in Petrichor'{YEAR}.</p>"
+    message +=f"<p><br> Thank you for participating in Petrichor'2026.</p>"
     message = messageUser(" from the Petrichor Team",message)
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [email]
@@ -673,7 +673,7 @@ def ForgetPasswordHtml(name,action_url):
             <tr>
               <td class="email-masthead">
                 <a href="{settings.FRONTEND_LINK}" class="f-fallback email-masthead_name">
-                Petrichor {YEAR}
+                Petrichor 2026
               </a>
               </td>
             </tr>
@@ -686,7 +686,7 @@ def ForgetPasswordHtml(name,action_url):
                     <td class="content-cell">
                       <div class="f-fallback">
                         <h1>Hi {name},</h1>
-                        <p>You recently requested to reset your password for your Petrichor {YEAR} account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
+                        <p>You recently requested to reset your password for your Petrichor 2026 account. Use the button below to reset it. <strong>This password reset is only valid for the next 24 hours.</strong></p>
                         <!-- Action -->
                         <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">
                           <tr>
@@ -705,7 +705,7 @@ def ForgetPasswordHtml(name,action_url):
                         </table>
                         
                         <p>Thanks,
-                          <br>The Petrichor {YEAR} team</p>
+                          <br>The Petrichor 2026 team</p>
                         <!-- Sub copy -->
                         <table class="body-sub" role="presentation">
                           <tr>
@@ -1170,7 +1170,7 @@ def messageUser(name,message:str):
             <tr>
               <td class="email-masthead">
                 <a href="{settings.FRONTEND_LINK}" class="f-fallback email-masthead_name">
-                Petrichor {YEAR}
+                Petrichor 2026
               </a>
               </td>
             </tr>
@@ -1185,7 +1185,7 @@ def messageUser(name,message:str):
                         <h1>Hi {name},</h1>
                         {message}                        
                         <p>Thanks,
-                          <br>Team Petrichor'{YEAR}</p>
+                          <br>Team Petrichor'2026</p>
                       </div>
                     </td>
                   </tr>
