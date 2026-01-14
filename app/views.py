@@ -238,7 +238,7 @@ def signup(request:Request):
                 except (NameError, Exception):
                     pass
                 
-                send_error_mail(inspect.stack()[0][3], request.data, error_message)  
+                # send_error_mail(inspect.stack()[0][3], request.data, error_message)  
                 return r500(f"Something failed {error_message}")
 
 
