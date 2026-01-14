@@ -217,13 +217,27 @@ def signup(request:Request):
                 # send_error_mail(inspect.stack()[0][3], request.data, e)  # Leave this commented otherwise every wrong login will send an error mail
                 return r500("User already exists. Try something different.")
             except Exception as e:
-                error_message = str(e)
-                if new_user:
-                    new_user.delete()
-                if user_registration:
-                    user_registration.delete()
-                if user_profile:
-                    user_profile.delete()
+                error_message = str(e)  # Capture it FIRST
+                
+                # Safe cleanup - won't raise NameError
+                try:
+                    if new_user:
+                        new_user.delete()
+                except (NameError, Exception):
+                    pass
+                
+                try:
+                    if user_registration:
+                        user_registration.delete()
+                except (NameError, Exception):
+                    pass
+                
+                try:
+                    if user_profile:
+                        user_profile.delete()
+                except (NameError, Exception):
+                    pass
+                
                 send_error_mail(inspect.stack()[0][3], request.data, error_message)  
                 return r500(f"Something failed {error_message}")
 
