@@ -71,7 +71,7 @@ def send_error_mail(name, data, e):
     try:
       send_mail(f'Website Error in: {name}',
                   message= f'Exception: {e}\nData: {json.dumps(data)}',
-                  recipient_list=['112201024@smail.iitpkd.ac.in','112201020@smail.iitpkd.ac.in'],
+                  recipient_list=['112201024@smail.iitpkd.ac.in','112201020@smail.iitpkd.ac.in', '112301031@smail.iitpkd.ac.in'],
                   from_email=settings.EMAIL_HOST_USER)
       return ""
     except Exception as e:
