@@ -1,6 +1,6 @@
 # Petrichor backend
 
-Every response(except for authentication error) from the api will atleast contain following-
+Every response(except for authentication error) from the api will atleast contain following:
 ```javascript
     {
         "status":number:"status_code",
